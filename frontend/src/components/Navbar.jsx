@@ -44,8 +44,8 @@ const Navbar = () => {
 				<img
 					onClick={() => {
                         if(!location.pathname.includes("collection")) {
-                            navigate("/collection");
                             setShowSearch((prev) => !prev)
+                            navigate("/collection");
                         }
                         setShowSearch((prev) => !prev)
                     }}
