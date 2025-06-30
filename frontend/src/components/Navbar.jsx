@@ -1,12 +1,13 @@
 import React from "react";
 import { assets } from "../assets/assets.js";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext.jsx";
 
 const Navbar = () => {
 	const [visible, setVisible] = React.useState(false);
 	const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } =
 		React.useContext(ShopContext);
+    const location = useLocation();
 
 	const logout = () => {
 		navigate("/login");
@@ -44,10 +45,11 @@ const Navbar = () => {
 				<img
 					onClick={() => {
                         if(!location.pathname.includes("collection")) {
-                            setShowSearch((prev) => !prev)
                             navigate("/collection");
+                            setTimeout(() => setShowSearch(true), 0);
+                        } else {
+                            setShowSearch((prev) => !prev)
                         }
-                        setShowSearch((prev) => !prev)
                     }}
 					src={assets.search_icon}
 					className="w-5 cursor-pointer"
