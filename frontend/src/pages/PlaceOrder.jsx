@@ -61,6 +61,10 @@ const PlaceOrder = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        if(!token) {
+            toast.error("Please login to place an order");
+            return;
+        }
         try {
             let orderItems = [];
 
