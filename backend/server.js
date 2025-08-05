@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
+import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route.js';
 import productRouter from './routes/product.route.js';
 import cartRouter from './routes/cart.route.js';
@@ -15,8 +16,13 @@ connectDB();
 connectCloudinary();
 
 //middlewares
+app.use(cors({
+    origin: '*', // allow all origins
+    credentials: true,
+}));
 app.use(express.json());
-app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //api endpoints
 app.use('/api/user', userRouter)
@@ -25,7 +31,7 @@ app.use('/api/cart', cartRouter)
 app.use('/api/order', orderRouter);
 
 app.get('/', (req, res) => {
-  res.status(200).send('Welcome to the backend server!');
+  res.status(200).send('Welcome to the Forever backend server!');
 });
 
 app.listen(PORT, () => {
