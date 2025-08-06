@@ -1,50 +1,48 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Login = () => {
 	const [currentState, setCurrentState] = React.useState("Login");
-    const { token, setToken, backendUrl, navigate } = React.useContext(ShopContext);
-    const [name, setName] = React.useState("");
-    const [email, setEmail] = React.useState("");   
-    const [password, setPassword] = React.useState("");
+	const { backendUrl, navigate, setIsAuthenticated } = React.useContext(ShopContext);
+	const [name, setName] = React.useState("");
+	const [email, setEmail] = React.useState("");
+	const [password, setPassword] = React.useState("");
 
 	const onSubmitHandler = async (e) => {
 		e.preventDefault();
-        try {
-            if(currentState === "Sign Up") {
-                const response = await axios.post(backendUrl + "/api/user/register", {name, email, password})
-                if(response.data.success) {
-                    setToken(response.data.token);
-                    localStorage.setItem("token", response.data.token);
-                    // navigate("/");
-                } else {
-                    toast.error(response.data.message);
-                }
-                
-            } else {
-                const response = await axios.post(backendUrl + "/api/user/login", {email, password})
-                if(response.data.success) {
-                    setToken(response.data.token);
-                    localStorage.setItem("token", response.data.token);
-                    // navigate("/");
-                } else {
-                    toast.error(response.data.message);
-                }
-                
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message || "Something went wrong while logging in");   
-        }
+		try {
+			if (currentState === "Sign Up") {
+				const response = await axios.post(
+					backendUrl + "/api/user/register",
+					{ name, email, password },
+					{ withCredentials: true }
+				);
+				if (response.data.success) {
+                    setIsAuthenticated(true);
+					navigate("/");
+				} else {
+					toast.error(response.data.message);
+				}
+			} else {
+				const response = await axios.post(
+					backendUrl + "/api/user/login",
+					{ email, password },
+					{ withCredentials: true }
+				);
+				if (response.data.success) {
+                    setIsAuthenticated(true);
+					navigate("/");
+				} else {
+					toast.error(response.data.message);
+				}
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error(error.message || "Something went wrong while logging in");
+		}
 	};
-
-    useEffect(() => {
-        if(token) {
-            navigate("/");
-        }
-    },[token]) 
 
 	return (
 		<form
@@ -59,8 +57,8 @@ const Login = () => {
 				""
 			) : (
 				<input
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
+					onChange={(e) => setName(e.target.value)}
+					value={name}
 					type="text"
 					className=" w-full px-3 py-2 border border-gray-800"
 					placeholder="Full name"
@@ -68,16 +66,16 @@ const Login = () => {
 				/>
 			)}
 			<input
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
+				onChange={(e) => setEmail(e.target.value)}
+				value={email}
 				type="email"
 				className=" w-full px-3 py-2 border border-gray-800"
 				placeholder="Email"
 				required
 			/>
 			<input
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
+				onChange={(e) => setPassword(e.target.value)}
+				value={password}
 				type="password"
 				className=" w-full px-3 py-2 border border-gray-800"
 				placeholder="Password"
@@ -95,7 +93,7 @@ const Login = () => {
 					</p>
 				)}
 			</div>
-			<button className="bg-black text-white font-light px-8 py-2 mt-4">
+			<button className="bg-black active:bg-gray-700 text-white font-light px-8 py-2 mt-4">
 				{currentState === "Login" ? "Sign In" : "Sign Up"}
 			</button>
 		</form>

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import nodemailer from "nodemailer";
-import {sendOtpHtmlTemplate} from "../constants.js";
+import { sendOtpHtmlTemplate } from "../constants.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
 	try {
@@ -168,6 +168,24 @@ const logoutUser = async (req, res) => {
 	}
 };
 
+// user profile
+const getUserProfile = async (req, res) => {
+	try {
+		if (!req.user) {
+			return res.status(401).json({ success: false, message: "Unauthorized" });
+		}
+		// Remove sensitive fields if needed
+		const { password, otp, otpExpiry, refreshToken, ...safeUser } = req.user.toObject ? req.user.toObject() : req.user;
+
+		return res
+			.status(200)
+			.json({ success: true, user: safeUser, message: "User profile fetched successfully" });
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: false, message: error.message });
+	}
+};
+
 // send otp to user email
 const sendOtpToEmail = async (req, res) => {
 	try {
@@ -195,21 +213,23 @@ const sendOtpToEmail = async (req, res) => {
 			},
 		});
 
-        const year = new Date().getFullYear();
-        const htmlTemplate = sendOtpHtmlTemplate.replace('{{OTP}}', user.otp).replace('{{YEAR}}', year);
+		const year = new Date().getFullYear();
+		const htmlTemplate = sendOtpHtmlTemplate
+			.replace("{{OTP}}", user.otp)
+			.replace("{{YEAR}}", year);
 
-        const mailOptions = {
-            from: `${process.env.SENDER_NAME} <${process.env.SENDER_EMAIL}>`,
-            to: email,
-            subject: "OTP for Email Verification",
-            text: `Your OTP for email verification is ${user.otp}. It is valid for 10 minutes.`,
-            html: htmlTemplate,
-        }
+		const mailOptions = {
+			from: `${process.env.SENDER_NAME} <${process.env.SENDER_EMAIL}>`,
+			to: email,
+			subject: "OTP for Email Verification",
+			text: `Your OTP for email verification is ${user.otp}. It is valid for 10 minutes.`,
+			html: htmlTemplate,
+		};
 
-        const info = await transporter.sendMail(mailOptions);
-        if (!info) {
-            return res.status(500).json({ success: false, message: "Failed to send OTP" });
-        }
+		const info = await transporter.sendMail(mailOptions);
+		if (!info) {
+			return res.status(500).json({ success: false, message: "Failed to send OTP" });
+		}
 
 		return res.status(200).json({ success: true, message: "OTP sent to email" });
 	} catch (error) {
@@ -218,37 +238,39 @@ const sendOtpToEmail = async (req, res) => {
 	}
 };
 
-// verify otp 
+// verify otp
 const verifyOtp = async (req, res) => {
-    try {
-        const { email, otp } = req.body;
-        if (!email || !otp) {
-            return res.status(400).json({ success: false, message: "Please provide email and OTP" });
-        }
+	try {
+		const { email, otp } = req.body;
+		if (!email || !otp) {
+			return res
+				.status(400)
+				.json({ success: false, message: "Please provide email and OTP" });
+		}
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
 
-        if (user.otp !== otp) {
-            return res.status(400).json({ success: false, message: "Invalid OTP" });
-        }
+		if (user.otp !== otp) {
+			return res.status(400).json({ success: false, message: "Invalid OTP" });
+		}
 
-        if (user.otpExpiry < Date.now()) {
-            return res.status(400).json({ success: false, message: "OTP expired" });
-        }
+		if (user.otpExpiry < Date.now()) {
+			return res.status(400).json({ success: false, message: "OTP expired" });
+		}
 
-        user.otp = undefined;
-        user.otpExpiry = undefined;
-        await user.save({ validateBeforeSave: false });
+		user.otp = undefined;
+		user.otpExpiry = undefined;
+		await user.save({ validateBeforeSave: false });
 
-        return res.status(200).json({ success: true, message: "OTP verified successfully" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-}
+		return res.status(200).json({ success: true, message: "OTP verified successfully" });
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: false, message: error.message });
+	}
+};
 
 // admin login
 const adminLogin = async (req, res) => {
@@ -270,4 +292,12 @@ const adminLogin = async (req, res) => {
 	}
 };
 
-export { loginUser, registerUser, adminLogin, logoutUser, sendOtpToEmail, verifyOtp };
+export {
+	loginUser,
+	registerUser,
+	adminLogin,
+	logoutUser,
+	sendOtpToEmail,
+	verifyOtp,
+	getUserProfile,
+};

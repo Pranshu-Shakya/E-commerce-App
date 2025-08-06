@@ -17,7 +17,7 @@ connectCloudinary();
 
 //middlewares
 app.use(cors({
-    origin: '*', // allow all origins
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 app.use(express.json());

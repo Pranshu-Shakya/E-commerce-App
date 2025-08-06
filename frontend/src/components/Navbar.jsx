@@ -2,18 +2,27 @@ import React from "react";
 import { assets } from "../assets/assets.js";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext.jsx";
+import axios from "axios";
+
 
 const Navbar = () => {
 	const [visible, setVisible] = React.useState(false);
-	const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } =
-		React.useContext(ShopContext);
-    const location = useLocation();
+	const { setShowSearch, getCartCount, navigate, setCartItems, backendUrl, isAuthenticated, setIsAuthenticated } = React.useContext(ShopContext);
+	const [showDropdown, setShowDropdown] = React.useState(false);
+	const location = useLocation();
 
-	const logout = () => {
-		navigate("/login");
-		localStorage.removeItem("token");
-		setToken("");
-		setCartItems({});
+	const logout = async () => {
+        try {
+            const response = await axios.post(`${backendUrl}/api/user/logout`, {}, { withCredentials: true });
+            if (response.data.success) {
+                setCartItems({});
+                setIsAuthenticated(false);
+                setShowDropdown(false);
+            }
+            navigate("/login");
+        } catch (error) {
+            console.log(error);
+        }
 	};
 
 	return (
@@ -41,33 +50,47 @@ const Navbar = () => {
 				</NavLink>
 			</ul>
 
+
 			<div className="flex items-center gap-6">
 				<img
 					onClick={() => {
-                        if(!location.pathname.includes("collection")) {
-                            navigate("/collection");
-                            setTimeout(() => setShowSearch(true), 0);
-                        } else {
-                            setShowSearch((prev) => !prev)
-                        }
-                    }}
+						if (!location.pathname.includes("collection")) {
+							navigate("/collection");
+							setTimeout(() => setShowSearch(true), 0);
+						} else {
+							setShowSearch((prev) => !prev);
+						}
+					}}
 					src={assets.search_icon}
 					className="w-5 cursor-pointer"
 					alt=""
 				/>
 
-				<div className="group relative">
+				<div
+					className="relative"
+					onMouseEnter={() => isAuthenticated && setShowDropdown(true)}
+					onMouseLeave={() => isAuthenticated && setShowDropdown(false)}
+				>
 					<img
-						onClick={() => (token ? null : navigate("/login"))}
+						onClick={() => {
+							if (isAuthenticated) {
+								setShowDropdown((prev) => !prev);
+							} else {
+								navigate("/login");
+							}
+						}}
 						className="w-5 cursor-pointer"
 						src={assets.profile_icon}
 						alt=""
 					/>
 					{/* Dropdown Menu */}
-					{token && (
-						<div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
-							<div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-								<p className="hover:text-black cursor-pointer">My Profile</p>
+					{isAuthenticated && (
+						<div
+							className={`absolute right-0 pt-4 transition-all duration-200 z-10 ${showDropdown ? "opacity-100 visible" : "opacity-0 invisible"}`}
+							style={{ pointerEvents: showDropdown ? "auto" : "none" }}
+						>
+							<div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded shadow">
+								<p onClick={() => navigate("/profile")} className="hover:text-black cursor-pointer">My Profile</p>
 								<p
 									onClick={() => navigate("/orders")}
 									className="hover:text-black cursor-pointer"
