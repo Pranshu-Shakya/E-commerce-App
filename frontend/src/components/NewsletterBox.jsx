@@ -8,10 +8,10 @@ const NewsletterBox = () => {
 	};
 
 	return (
-		<div className="text-center">
+		<div className="text-center my-16">
 			<p className="text-2xl font-medium text-gray-800">Subscribe Now and get 20% Off</p>
 			<p className="mt-3 text-gray-400">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit, nihil?
+				Join our newsletter to stay updated with the latest offers and products.
 			</p>
 			<form
 				onSubmit={onSubmitHandler}
@@ -23,7 +23,7 @@ const NewsletterBox = () => {
 					placeholder="Enter your email"
 					required
 				/>
-				<button type="submit" className="bg-black text-white text-xs px-10 py-4">
+				<button type="submit" className="bg-black text-white text-xs hover:bg-black/85 px-10 py-4">
 					SUBSCRIBE
 				</button>
 			</form>
