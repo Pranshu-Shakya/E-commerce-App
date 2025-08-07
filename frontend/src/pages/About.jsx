@@ -1,4 +1,3 @@
-import React from "react";
 import Title from "../components/Title";
 import { assets } from "../assets/assets.js";
 import NewsletterBox from "../components/NewsletterBox";
@@ -35,7 +34,7 @@ const About = () => {
 				<Title text1={"WHY"} text2={"CHOOSE US"} />
 			</div>
 
-			<div className="flex flex-col md:flex-row text-sm mb-20 gap-6">
+			<div className="flex flex-col md:flex-row flex-wrap text-sm mb-20 gap-6">
 				<div className="flex-1 bg-white rounded-2xl shadow-lg px-8 md:px-10 py-10 sm:py-16 flex flex-col items-center gap-4 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
 					<div className="w-12">
 						<img src={assets.qualityPremium_icon} alt="" />

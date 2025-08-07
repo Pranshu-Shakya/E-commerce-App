@@ -6,14 +6,13 @@ import axios from "axios";
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
-	const currency = "$";
+	const currency = "₹";
 	const delivery_fee = 10;
 	const backendUrl = import.meta.env.VITE_BACKEND_URL;
 	const [search, setSearch] = useState("");
 	const [showSearch, setShowSearch] = useState(false);
 	const [cartItems, setCartItems] = useState({});
 	const [products, setProducts] = useState([]);
-	const [token, setToken] = useState("");
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const navigate = useNavigate();
 
@@ -22,7 +21,6 @@ const ShopContextProvider = (props) => {
 			toast.error("Select Product Size");
 			return;
 		}
-
 		let cartData = structuredClone(cartItems);
 		if (cartData[itemId]) {
 			if (cartData[itemId][size]) {
@@ -36,17 +34,18 @@ const ShopContextProvider = (props) => {
 		}
 		setCartItems(cartData);
 
-		if (token) {
-			try {
-				await axios.post(
-					backendUrl + "/api/cart/add",
-					{ itemId, size },
-					{ headers: { token } }
-				);
-			} catch (error) {
-				console.log(error);
-				toast.error(error.message || "Something went wrong while adding to cart");
-			}
+		try {
+			await axios.post(
+				backendUrl + "/api/cart/add",
+				{ itemId, size },
+				{ withCredentials: true }
+			);
+			toast.success("Item added to cart", {
+				position: "bottom-right",
+			});
+		} catch (error) {
+			console.log(error);
+			toast.error(error.message || "Something went wrong while adding to cart");
 		}
 	};
 
@@ -67,30 +66,31 @@ const ShopContextProvider = (props) => {
 	const updateQuantity = async (itemId, size, quantity) => {
 		let cartData = structuredClone(cartItems);
 
+		if (quantity === 0) {
+			delete cartData[itemId][size];
+		}
 		cartData[itemId][size] = quantity;
 
 		setCartItems(cartData);
 
-		if (token) {
-			try {
-				await axios.post(
-					backendUrl + "/api/cart/update",
-					{ itemId, size, quantity },
-					{ headers: { token } }
-				);
-			} catch (error) {
-				console.log(error);
-				toast.error(error.message || "Something went wrong while updating cart");
-			}
+		try {
+			await axios.post(
+				backendUrl + "/api/cart/update",
+				{ itemId, size, quantity },
+				{ withCredentials: true }
+			);
+		} catch (error) {
+			console.log(error);
+			toast.error(error.message || "Something went wrong while updating cart");
 		}
 	};
 
-	const getUserCart = async (token) => {
+	const getUserCart = async () => {
 		try {
 			const response = await axios.post(
 				backendUrl + "/api/cart/get",
 				{},
-				{ headers: { token } }
+				{ withCredentials: true }
 			);
 			if (response.data.success) {
 				setCartItems(response.data.cartData);
@@ -152,6 +152,7 @@ const ShopContextProvider = (props) => {
 
 	useEffect(() => {
 		getProductsData();
+		getUserCart();
 	}, []);
 
 	const value = {
@@ -170,10 +171,8 @@ const ShopContextProvider = (props) => {
 		getCartAmount,
 		navigate,
 		backendUrl,
-		token,
-		setToken,
-        isAuthenticated,
-        setIsAuthenticated
+		isAuthenticated,
+		setIsAuthenticated,
 	};
 
 	return <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>;

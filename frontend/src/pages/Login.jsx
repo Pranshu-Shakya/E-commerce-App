@@ -20,7 +20,7 @@ const Login = () => {
 					{ withCredentials: true }
 				);
 				if (response.data.success) {
-                    setIsAuthenticated(true);
+					setIsAuthenticated(true);
 					navigate("/");
 				} else {
 					toast.error(response.data.message);
@@ -32,7 +32,7 @@ const Login = () => {
 					{ withCredentials: true }
 				);
 				if (response.data.success) {
-                    setIsAuthenticated(true);
+					setIsAuthenticated(true);
 					navigate("/");
 				} else {
 					toast.error(response.data.message);

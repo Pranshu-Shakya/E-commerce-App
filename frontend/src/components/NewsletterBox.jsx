@@ -23,7 +23,10 @@ const NewsletterBox = () => {
 					placeholder="Enter your email"
 					required
 				/>
-				<button type="submit" className="bg-black text-white text-xs hover:bg-black/85 px-10 py-4">
+				<button
+					type="submit"
+					className="bg-black text-white text-xs hover:bg-black/85 px-10 py-4"
+				>
 					SUBSCRIBE
 				</button>
 			</form>

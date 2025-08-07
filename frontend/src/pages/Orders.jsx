@@ -6,18 +6,15 @@ import { assets } from "../assets/assets";
 import Button from "../components/Button";
 
 const Orders = () => {
-	const { backendUrl, token, currency } = useContext(ShopContext);
+	const { backendUrl, currency } = useContext(ShopContext);
 	const [orderData, setOrderData] = React.useState([]);
 
 	const loadOrderData = async () => {
 		try {
-			if (!token) {
-				return null;
-			}
 			const response = await axios.post(
 				backendUrl + "/api/order/userorders",
 				{},
-				{ headers: { token } }
+				{ withCredentials: true }
 			);
 			if (response.data.success) {
 				let allOrderItems = [];
@@ -32,12 +29,15 @@ const Orders = () => {
 				});
 				setOrderData(allOrderItems.reverse());
 			}
-		} catch (error) {}
+		} catch (error) {
+            console.error("Error loading order data:", error);
+            setOrderData([]);
+        }
 	};
 
 	useEffect(() => {
 		loadOrderData();
-	}, [token]);
+	}, []);
 
 	return (
 		<div className="border-t pt-16">

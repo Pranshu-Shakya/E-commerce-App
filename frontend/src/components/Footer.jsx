@@ -9,19 +9,47 @@ const Footer = () => {
 				<div>
 					<img src={assets.logo} className="mb-5 w-32" alt="" />
 					<p className="w-full md:w-2/3 text-gray-600">
-						Your one-stop shop for the latest trends and styles.
-                        Explore our wide range of products and enjoy exclusive offers.
-                        Every Product is crafted with care to ensure the highest quality and satisfaction.
+						Your one-stop shop for the latest trends and styles. Explore our wide range
+						of products and enjoy exclusive offers. Every Product is crafted with care
+						to ensure the highest quality and satisfaction.
 					</p>
 				</div>
 
 				<div>
 					<p className="text-xl font-medium mb-5">COMPANY</p>
 					<ul className="flex flex-col gap-1 text-gray-600">
-						<li><NavLink to="/" className={({ isActive }) => (isActive ? "font-bold" : "")}>Home</NavLink></li>
-						<li><NavLink to="/about" className={({ isActive }) => (isActive ? "font-bold" : "")}>About us</NavLink></li>
-						<li><NavLink to="/delivery" className={({ isActive }) => (isActive ? "font-bold" : "")}>Delivery</NavLink></li>
-						<li><NavLink to="/privacy" className={({ isActive }) => (isActive ? "font-bold" : "")}>Privacy Policy</NavLink></li>
+						<li>
+							<NavLink
+								to="/"
+								className={({ isActive }) => (isActive ? "font-bold" : "")}
+							>
+								Home
+							</NavLink>
+						</li>
+						<li>
+							<NavLink
+								to="/about"
+								className={({ isActive }) => (isActive ? "font-bold" : "")}
+							>
+								About us
+							</NavLink>
+						</li>
+						<li>
+							<NavLink
+								to="/delivery"
+								className={({ isActive }) => (isActive ? "font-bold" : "")}
+							>
+								Delivery
+							</NavLink>
+						</li>
+						<li>
+							<NavLink
+								to="/privacy"
+								className={({ isActive }) => (isActive ? "font-bold" : "")}
+							>
+								Privacy Policy
+							</NavLink>
+						</li>
 					</ul>
 				</div>
 
