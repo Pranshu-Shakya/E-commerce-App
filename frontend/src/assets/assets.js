@@ -77,6 +77,7 @@ import cross_icon from './cross_icon.png'
 import convenience from './convenience.png'
 import qualityPremium_icon from './qualityPremium_icon.png'
 import shopping_cart from './shopping_cart.png'
+import add from './add.png'
 
 export const assets = {
     logo,
@@ -101,6 +102,7 @@ export const assets = {
     convenience,
     qualityPremium_icon,
     shopping_cart,
+    add
 }
 
 export const products = [

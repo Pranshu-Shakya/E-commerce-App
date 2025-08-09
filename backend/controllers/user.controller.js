@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import nodemailer from "nodemailer";
 import { sendOtpHtmlTemplate } from "../constants.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const generateAccessAndRefreshToken = async (userId) => {
 	try {
@@ -175,7 +176,9 @@ const getUserProfile = async (req, res) => {
 			return res.status(401).json({ success: false, message: "Unauthorized" });
 		}
 		// Remove sensitive fields if needed
-		const { password, otp, otpExpiry, refreshToken, ...safeUser } = req.user.toObject ? req.user.toObject() : req.user;
+		const { password, otp, otpExpiry, refreshToken, ...safeUser } = req.user.toObject
+			? req.user.toObject()
+			: req.user;
 
 		return res
 			.status(200)
@@ -185,6 +188,118 @@ const getUserProfile = async (req, res) => {
 		res.status(500).json({ success: false, message: error.message });
 	}
 };
+
+// get current user data
+const getCurrentUserData = async (req, res) => {
+	try {
+		if (!req.user) {
+			return res.status(401).json({ success: false, message: "Unauthorized" });
+		}
+		const user = await User.findById(req.user._id).select(
+			"-password -otp -otpExpiry -refreshToken"
+		);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+		return res
+			.status(200)
+			.json({ success: true, user, message: "User data fetched successfully" });
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: false, message: error.message });
+	}
+};
+
+// update user profile
+const updateUserProfile = async (req, res) => {
+	try {
+		const { name, email, phone, address, profilePicture } = req.body;
+
+		if (!name || !email) {
+			return res
+				.status(400)
+				.json({ success: false, message: "Name and email are required" });
+		}
+
+		// Validate email format
+		if (!validator.isEmail(email)) {
+			return res.status(400).json({ success: false, message: "Please enter a valid email" });
+		}
+
+		const user = await User.findById(req.user._id);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		user.name = name;
+		user.email = email;
+		user.phone = phone || user.phone;
+		user.address = address || user.address;
+
+		if (profilePicture) {
+			// Upload new profile picture to Cloudinary
+			try {
+				const result = await cloudinary.uploader.upload(profilePicture, {
+					folder: "profile_pictures",
+					resource_type: "image",
+				});
+                user.profilePicture = result.secure_url;
+			} catch (error) {
+				console.log(error);
+				res.status(500).json({
+					success: false,
+					message: "Failed to upload profile picture",
+				});
+			}
+
+		}
+
+		await user.save();
+
+		return res.status(200).json({ success: true, message: "Profile updated successfully" });
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: false, message: error.message });
+	}
+};
+
+// change password
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: "Please fill all the fields" });
+        }
+
+        if (newPassword.length < 5) {
+            return res.status(400).json({
+                success: false,
+                message: "New password must be at least 5 characters long",
+            });
+        }
+
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Current password is incorrect" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        return res.status(200).json({ success: true, message: "Password changed successfully" });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
 
 // send otp to user email
 const sendOtpToEmail = async (req, res) => {
@@ -300,4 +415,7 @@ export {
 	sendOtpToEmail,
 	verifyOtp,
 	getUserProfile,
+	getCurrentUserData,
+	updateUserProfile,
+	changePassword
 };

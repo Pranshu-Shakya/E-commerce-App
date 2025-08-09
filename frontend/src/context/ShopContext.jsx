@@ -14,6 +14,7 @@ const ShopContextProvider = (props) => {
 	const [cartItems, setCartItems] = useState({});
 	const [products, setProducts] = useState([]);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState({});
 	const navigate = useNavigate();
 
 	const addToCart = async (itemId, size) => {
@@ -140,6 +141,7 @@ const ShopContextProvider = (props) => {
 				});
 				if (response.data.success) {
 					setIsAuthenticated(true);
+                    setUser(response.data.user);
 				} else {
 					setIsAuthenticated(false);
 				}
@@ -173,6 +175,7 @@ const ShopContextProvider = (props) => {
 		backendUrl,
 		isAuthenticated,
 		setIsAuthenticated,
+        user,
 	};
 
 	return <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>;

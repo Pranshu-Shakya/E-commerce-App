@@ -25,8 +25,12 @@ const userSchema = new mongoose.Schema(
 			default: {},
 		},
 		address: {
-			type: String,
-			default: "",
+			type: Object,
+			default: {
+                colony: "",
+                state: "",
+                country: "India",
+            },
 		},
 		phone: {
 			type: String,
@@ -57,7 +61,7 @@ userSchema.methods.generateAccessToken = function () {
 		{
 			_id: this._id,
 			email: this.email,
-			fullname: this.fullname,
+			name: this.name,
 		},
 		process.env.ACCESS_TOKEN_SECRET,
 		{

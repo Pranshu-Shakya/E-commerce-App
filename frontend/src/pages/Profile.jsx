@@ -1,17 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { assets } from "../assets/assets.js";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {ShopContext} from "../context/ShopContext.jsx";
 import BillingAddress from "../components/BillingAddress.jsx";
 import ChangePassword from "../components/ChangePassword.jsx";
 import MyOrders from "../components/MyOrders.jsx";
 import DeleteAccount from "../components/DeleteAccount.jsx";
 import Account from "../components/Account.jsx";
 import Privacy from "../components/Privacy.jsx";
-
-const user = {
-	name: "Pranshu Shakya",
-	email: "pranshushakya12b20@email.com",
-	avatar: assets.profile,
-};
 
 const navItems = [
 	{ icon: "fa-user", label: "Account", component: <Account /> },
@@ -24,7 +21,30 @@ const navItems = [
 ];
 
 function Profile() {
+    const { backendUrl } = useContext(ShopContext);
 	const [activeTab, setActiveTab] = useState("account");
+	const [user, setUser] = useState({});
+
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get(`${backendUrl}/api/user/current`, {
+                withCredentials: true,
+            });
+            if (response.data.success) {
+                setUser(response.data.user);
+            } else {
+                toast.error(response.data.message || "Failed to fetch profile");
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to fetch profile");
+        }
+    }
+
+    useEffect(() => {
+        fetchProfile();
+    }, [activeTab]);
+
 	const activeItem = navItems.find(
 		(item) => item.label.toLowerCase().replace(" ", "-") === activeTab
 	);
@@ -41,7 +61,7 @@ function Profile() {
 					}`}
 				>
 					<img
-						src={user.avatar}
+						src={user.profilePicture || assets.defaultAvatar}
 						alt="Profile"
 						className="w-28 h-28 rounded-full object-cover border-4 border-gray-200 shadow mb-4"
 					/>

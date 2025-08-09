@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { toast } from "react-toastify";
+import { ShopContext } from "../context/ShopContext";
+import axios from "axios";
 
 const ChangePassword = () => {
+	const { backendUrl } = useContext(ShopContext);
 	const [form, setForm] = useState({
-		current: "",
-		new: "",
-		confirm: "",
+		currentPassword: "",
+		newPassword: "",
+		confirmPassword: "",
 	});
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState("");
@@ -15,19 +19,36 @@ const ChangePassword = () => {
 		setSuccess("");
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!form.current || !form.new || !form.confirm) {
+		if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
 			setError("All fields are required.");
 			return;
 		}
-		if (form.new !== form.confirm) {
+		if (form.newPassword.length < 5) {
+			setError("New password must be at least 5 characters long.");
+			return;
+		}
+		if (form.newPassword !== form.confirmPassword) {
 			setError("New passwords do not match.");
 			return;
 		}
-		// Simulate success
-		setSuccess("Password changed successfully!");
-		setForm({ current: "", new: "", confirm: "" });
+		try {
+			const response = await axios.post(`${backendUrl}/api/user/change-password`, form, {
+				withCredentials: true,
+			});
+			if (response.data.success) {
+				toast.success("Password changed successfully!");
+				setSuccess("Password changed successfully!");
+				setError("");
+				setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+			} else {
+				toast.error(response.data.message || "Failed to change password.");
+			}
+		} catch (error) {
+			console.log(error);
+            setError(error.response?.data?.message || "Something went wrong");
+		}
 	};
 
 	return (
@@ -42,8 +63,8 @@ const ChangePassword = () => {
 						<label className="block font-medium mb-1">Current Password</label>
 						<input
 							type="password"
-							name="current"
-							value={form.current}
+							name="currentPassword"
+							value={form.currentPassword}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
 							required
@@ -53,8 +74,8 @@ const ChangePassword = () => {
 						<label className="block font-medium mb-1">New Password</label>
 						<input
 							type="password"
-							name="new"
-							value={form.new}
+							name="newPassword"
+							value={form.newPassword}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
 							required
@@ -64,8 +85,8 @@ const ChangePassword = () => {
 						<label className="block font-medium mb-1">Confirm New Password</label>
 						<input
 							type="password"
-							name="confirm"
-							value={form.confirm}
+							name="confirmPassword"
+							value={form.confirmPassword}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
 							required

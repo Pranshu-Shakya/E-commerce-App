@@ -16,7 +16,7 @@ const authUser = async (req, res, next) => {
 		}
 
 		req.user = {
-			id: token_decoded._id || token_decoded.id,
+			_id: token_decoded._id || token_decoded.id,
 			email: token_decoded.email,
 			name: token_decoded.name,
 		};

@@ -1,22 +1,33 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext, use, useEffect } from "react";
 import { assets } from "../assets/assets.js";
-
-const initialUser = {
-	name: "Pranshu Shakya",
-	email: "pranshushakya12b20@email.com",
-	phone: "+91 9876543210",
-	country: "India",
-	address: "123 Main St, New Delhi, 110001",
-	joined: "January 2024",
-	avatar: assets.profile,
-};
+import axios from "axios";
+import { ShopContext } from "../context/ShopContext.jsx";
+import { toast } from "react-toastify";
 
 const Account = () => {
-	const [user, setUser] = useState(initialUser);
+	const { backendUrl } = useContext(ShopContext);
+	const [user, setUser] = useState({});
 	const [editMode, setEditMode] = useState(false);
-	const [form, setForm] = useState(initialUser);
-	const [avatarPreview, setAvatarPreview] = useState(initialUser.avatar);
+	const [form, setForm] = useState({});
+	const [avatarPreview, setAvatarPreview] = useState(user.profilePicture);
 	const fileInputRef = useRef();
+
+	const fetchUserData = async () => {
+		try {
+			const response = await axios.get(`${backendUrl}/api/user/current`, {
+				withCredentials: true,
+			});
+			if (response.data.success) {
+				setUser(response.data.user);
+				setForm(response.data.user);
+				setAvatarPreview(response.data.user.profilePicture || assets.profile);
+			} else {
+				toast.error(response.data.message || "Failed to fetch user data");
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const handleChange = (e) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
@@ -28,7 +39,7 @@ const Account = () => {
 			const reader = new FileReader();
 			reader.onloadend = () => {
 				setAvatarPreview(reader.result);
-				setForm((prev) => ({ ...prev, avatar: reader.result }));
+				setForm((prev) => ({ ...prev, profilePicture: reader.result }));
 			};
 			reader.readAsDataURL(file);
 		}
@@ -41,15 +52,31 @@ const Account = () => {
 	const handleCancel = () => {
 		setEditMode(false);
 		setForm(user);
-		setAvatarPreview(user.avatar);
+		setAvatarPreview(user.profilePicture || assets.profile);
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
 
-	const handleSave = (e) => {
+	const handleSave = async (e) => {
 		e.preventDefault();
 		setUser(form);
+        try {
+            const response = await axios.post(`${backendUrl}/api/user/update-profile`, form, {
+                withCredentials: true,
+            });
+            if (response.data.success) {
+                toast.success("Profile updated successfully");
+            } else {
+                toast.error(response.data.message || "Failed to update profile");
+            }
+        } catch (error) {
+            console.log(error)
+        }
 		setEditMode(false);
 	};
+
+	useEffect(() => {
+		fetchUserData();
+	}, []);
 
 	return (
 		<div className="max-w-lg mx-auto bg-white flex flex-col items-center">
@@ -63,10 +90,10 @@ const Account = () => {
 					<button
 						type="button"
 						onClick={() => fileInputRef.current && fileInputRef.current.click()}
-						className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-700 transition"
+						className="absolute right-2 bottom-2 bg-white rounded-full shadow hover:bg-gray-100 transition"
 						title="Change profile picture"
 					>
-						<i className="fas fa-camera"></i>
+						<img className="w-12" src={assets.add} alt="Change profile" />
 					</button>
 				)}
 				<input
@@ -112,11 +139,31 @@ const Account = () => {
 						/>
 					</div>
 					<div>
+						<label className="block font-semibold mb-1">Address</label>
+						<input
+							type="text"
+							name="address"
+							value={form.address.colony}
+							onChange={handleChange}
+							className="w-full border border-gray-300 rounded-lg px-3 py-2"
+						/>
+					</div>
+					<div>
 						<label className="block font-semibold mb-1">Country</label>
 						<input
 							type="text"
 							name="country"
-							value={form.country}
+							value={form.address.country}
+							onChange={handleChange}
+							className="w-full border border-gray-300 rounded-lg px-3 py-2"
+						/>
+					</div>
+					<div>
+						<label className="block font-semibold mb-1">State</label>
+						<input
+							type="text"
+							name="state"
+							value={form.address.state}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						/>
@@ -126,12 +173,12 @@ const Account = () => {
 						<input
 							type="text"
 							name="address"
-							value={form.address}
+							value={form.address.colony}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						/>
 					</div>
-					<div>
+					{/* <div>
 						<label className="block font-semibold mb-1">Member Since</label>
 						<input
 							type="text"
@@ -141,7 +188,7 @@ const Account = () => {
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 							disabled
 						/>
-					</div>
+					</div> */}
 					<div className="flex gap-3 justify-end pt-2">
 						<button
 							type="button"
@@ -161,9 +208,9 @@ const Account = () => {
 			) : (
 				<div className="w-full px-12 flex flex-col items-center">
 					<div className="text-center mb-6">
-                        <h2 className="text-2xl font-semibold mb-1">{user.name}</h2>
-					<p className="text-gray-500 mb-6">{user.email}</p>
-                    </div>
+						<h2 className="text-2xl font-semibold mb-1">{user.name}</h2>
+						<p className="text-gray-500 mb-6">{user.email}</p>
+					</div>
 					<div className="w-full space-y-4">
 						<div className="flex items-center gap-2">
 							<span className="font-semibold w-32">Phone:</span>
@@ -171,15 +218,15 @@ const Account = () => {
 						</div>
 						<div className="flex items-center gap-2">
 							<span className="font-semibold w-32">Country:</span>
-							<span className="text-gray-700">{user.country}</span>
+							<span className="text-gray-700">{user.address?.country}</span>
 						</div>
 						<div className="flex items-center gap-2">
 							<span className="font-semibold w-32">Address:</span>
-							<span className="text-gray-700">{user.address}</span>
+							<span className="text-gray-700">{user.address?.colony}</span>
 						</div>
 						<div className="flex items-center gap-2">
 							<span className="font-semibold w-32">Member Since:</span>
-							<span className="text-gray-700">{user.joined}</span>
+							{/* <span className="text-gray-700">{user.joined}</span> */}
 						</div>
 					</div>
 					<button
