@@ -9,6 +9,7 @@ const Login = () => {
 	const [name, setName] = React.useState("");
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
+    const [error, setError] = React.useState("");
 
 	const onSubmitHandler = async (e) => {
 		e.preventDefault();
@@ -40,7 +41,8 @@ const Login = () => {
 			}
 		} catch (error) {
 			console.log(error);
-			toast.error(error.message || "Something went wrong while logging in");
+            setError(error.response?.data?.message || "Something went wrong while logging in");
+			toast.error(error.response?.data?.message || "Something went wrong while logging in");
 		}
 	};
 
@@ -81,6 +83,7 @@ const Login = () => {
 				placeholder="Password"
 				required
 			/>
+            { error && <p className="text-red-500 text-sm">{error}</p>}
 			<div className="w-full flex justify-between text-sm mt-[-8px]">
 				<p className="cursor-pointer">Forgot your password?</p>
 				{currentState === "Login" ? (
