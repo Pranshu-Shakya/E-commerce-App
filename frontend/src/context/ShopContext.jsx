@@ -100,7 +100,7 @@ const ShopContextProvider = (props) => {
 			}
 		} catch (error) {
 			console.log(error);
-			toast.error(error.message || "Something went wrong while fetching cart");
+			// toast.error(error.message || "Something went wrong while fetching cart");
 		}
 	};
 
