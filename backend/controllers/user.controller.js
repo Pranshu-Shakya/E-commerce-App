@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
 		const options = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: "none",
+			sameSite: "lax",
 		};
 
 		const userWithoutSensitiveData = await User.findById(user._id).select(
@@ -125,7 +125,7 @@ const registerUser = async (req, res) => {
 		const options = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: "none",
+			sameSite: "lax",
 		};
 
 		return res

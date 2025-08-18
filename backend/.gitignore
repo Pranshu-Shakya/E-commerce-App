@@ -24,10 +24,9 @@ coverage
 # Caches
 .eslintcache
 .cache
-.vite
 
-# Vercel local settings (keep vercel.json committed)
-.vercel
+# Optional: local uploads (if you ever switch from Cloudinary temp files to disk)
+uploads/
 
 # Editor directories and files
 .vscode/*

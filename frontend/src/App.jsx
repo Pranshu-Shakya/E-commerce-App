@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import Verify from "./pages/Verify.jsx";
 import Profile from "./pages/Profile.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import VerifyEmail from "./pages/VerifyEmail.jsx";
 
 const App = () => {
 	return (
@@ -36,6 +37,7 @@ const App = () => {
 				<Route path="/orders" element={<Orders />} />
 				<Route path="/verify" element={<Verify />} />
 				<Route path="/profile" element={<Profile />} />
+				<Route path="/verify-email" element={<VerifyEmail />} />
 				<Route
 					path="*"
 					element={<h1 className="text-3xl text-center mt-10">Page Not Found</h1>}

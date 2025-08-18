@@ -16,6 +16,7 @@ const Orders = () => {
 				{},
 				{ withCredentials: true }
 			);
+			console.log(response.data);
 			if (response.data.success) {
 				let allOrderItems = [];
 				response.data.orders.map((order) => {
@@ -30,9 +31,9 @@ const Orders = () => {
 				setOrderData(allOrderItems.reverse());
 			}
 		} catch (error) {
-            console.error("Error loading order data:", error);
-            setOrderData([]);
-        }
+			console.error("Error loading order data:", error);
+			setOrderData([]);
+		}
 	};
 
 	useEffect(() => {

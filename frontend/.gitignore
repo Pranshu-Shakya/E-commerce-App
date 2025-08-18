@@ -12,6 +12,23 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Testing and coverage
+coverage
+.nyc_output
+
+# Caches
+.eslintcache
+.cache
+.vite
+
+# Vercel local settings (keep vercel.json committed)
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

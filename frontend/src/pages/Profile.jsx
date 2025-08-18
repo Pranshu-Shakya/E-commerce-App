@@ -21,7 +21,7 @@ const navItems = [
 ];
 
 function Profile() {
-    const { backendUrl } = useContext(ShopContext);
+    const { backendUrl, isAuthenticated, navigate } = useContext(ShopContext);
 	const [activeTab, setActiveTab] = useState("account");
 	const [user, setUser] = useState({});
 
@@ -33,11 +33,12 @@ function Profile() {
             if (response.data.success) {
                 setUser(response.data.user);
             } else {
-                toast.error(response.data.message || "Failed to fetch profile");
+                // toast.error(response.data.message || "Failed to fetch profile");
+                console.log(response.data.message);
             }
         } catch (error) {
             console.log(error);
-            toast.error("Failed to fetch profile");
+            // toast.error("Failed to fetch profile");
         }
     }
 
@@ -104,7 +105,7 @@ function Profile() {
 			</aside>
 
 			{/* Main Content */}
-			<main className="flex-1 bg-white rounded-2xl shadow p-8">
+			{ isAuthenticated ? (<main className="flex-1 bg-white rounded-2xl shadow p-8">
 				<h3 className="text-2xl font-semibold mb-6 flex items-center gap-3">
 					{activeItem?.icon && (
 						<i className={`fas ${activeItem.icon} text-blue-500`}></i>
@@ -116,7 +117,25 @@ function Profile() {
 						<p>Select a section from the sidebar to view details.</p>
 					</div>
 				)}
-			</main>
+			</main>) : (
+				<div className="flex-1 flex flex-col items-center justify-center bg-white rounded-2xl shadow p-8 min-h-[350px]">
+					<div className="flex flex-col items-center">
+						{/* <div className="bg-blue-100 rounded-full p-4 mb-4">
+							<i className="fas fa-user-lock text-4xl text-blue-500"></i>
+						</div> */}
+						<h3 className="text-2xl font-semibold mb-2 text-center">You are not logged in</h3>
+						<p className="text-gray-500 mb-6 text-center max-w-xs">
+							Please log in to access your profile and account details.
+						</p>
+						<button
+							className="bg-blue-500 hover:bg-blue-600 transition text-white px-6 py-2 rounded-lg font-medium shadow"
+							onClick={() => navigate('/login')}
+						>
+							Log In
+						</button>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
