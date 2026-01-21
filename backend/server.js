@@ -18,7 +18,7 @@ connectCloudinary();
 //middlewares
 app.use(
 	cors({
-		origin: ["http://localhost:5173", "https://forever-app-frontend.vercel.app", "http://localhost:5174"],
+		origin: ["http://localhost:5173", "https://trendskart.vercel.app", "https://trendskart-admin.vercel.app", "http://localhost:5174"],
 		credentials: true,
 	})
 );
