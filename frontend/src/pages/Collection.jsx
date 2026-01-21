@@ -79,7 +79,7 @@ const Collection = () => {
 	}, [sortType]);
 
 	return (
-		<div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
+		<div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-6">
 			{/* Filter Options */}
 			<div className="min-w-60">
 				<p
@@ -101,33 +101,36 @@ const Collection = () => {
 				>
 					<p className="mb-3 text-sm font-medium">CATEGORIES</p>
 					<div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-						<p className="flex gap-2 ">
+						<label htmlFor="men" className="flex gap-2 ">
 							<input
+                                id="men"
 								className="w-3"
 								type="checkbox"
 								value={"Men"}
 								onChange={toggleCategory}
 							/>{" "}
 							Men
-						</p>
-						<p className="flex gap-2 ">
+						</label>
+						<label htmlFor="women" className="flex gap-2 ">
 							<input
+                                id="women"
 								className="w-3"
 								type="checkbox"
 								value={"Women"}
 								onChange={toggleCategory}
 							/>{" "}
 							Women
-						</p>
-						<p className="flex gap-2 ">
+						</label>
+						<label htmlFor="kids" className="flex gap-2 ">
 							<input
+                                id="kids"
 								className="w-3"
 								type="checkbox"
 								value={"Kids"}
 								onChange={toggleCategory}
 							/>{" "}
 							Kids
-						</p>
+						</label>
 					</div>
 				</div>
 
@@ -139,33 +142,36 @@ const Collection = () => {
 				>
 					<p className="mb-3 text-sm font-medium">TYPE</p>
 					<div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-						<p className="flex gap-2 ">
+						<label htmlFor="topwear" className="flex gap-2">
 							<input
+                                id="topwear"
 								className="w-3"
 								type="checkbox"
 								value={"Topwear"}
 								onClick={toggleSubCategory}
 							/>{" "}
 							Topwear
-						</p>
-						<p className="flex gap-2 ">
+						</label>
+						<label htmlFor="bottomwear" className="flex gap-2 ">
 							<input
+                                id="bottomwear"
 								className="w-3"
 								type="checkbox"
 								value={"Bottomwear"}
 								onClick={toggleSubCategory}
 							/>{" "}
 							Bottomwear
-						</p>
-						<p className="flex gap-2 ">
+						</label>
+						<label htmlFor="winterwear" className="flex gap-2 ">
 							<input
+                                id="winterwear"
 								className="w-3"
 								type="checkbox"
 								value={"Winterwear"}
 								onClick={toggleSubCategory}
 							/>{" "}
 							Winterwear
-						</p>
+						</label>
 					</div>
 				</div>
 			</div>

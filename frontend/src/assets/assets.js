@@ -57,6 +57,8 @@ import profile from './profile.png'
 
 
 import logo from './logo.png'
+import LogoBlack from './LogoBlack.png'
+import LogoWhite from './LogoWhite.png'
 import hero_img from './hero_img.png'
 import cart_icon from './cart_icon.png'
 import bin_icon from './bin_icon.png'
@@ -81,6 +83,8 @@ import add from './add.png'
 
 export const assets = {
     logo,
+    LogoBlack,
+    LogoWhite,
     hero_img,
     cart_icon,
     dropdown_icon,

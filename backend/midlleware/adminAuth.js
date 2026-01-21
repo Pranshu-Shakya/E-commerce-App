@@ -6,7 +6,7 @@ const adminAuth = (req, res, next) => {
         if(!token ) {
             return res.status(401).json({ success: false, message: 'Not Authorized, Login Again!' });
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         if(decoded !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
             return res.status(403).json({ success: false, message: 'Not Authorized, Login Again!' });
         }

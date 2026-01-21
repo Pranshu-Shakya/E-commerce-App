@@ -11,11 +11,24 @@ const Product = () => {
 	const [image, setImage] = React.useState("");
 	const [size, setSize] = React.useState("");
 
+	// Generate random offer (discount percentage)
+	const [offer, setOffer] = React.useState(0);
+	const [originalPrice, setOriginalPrice] = React.useState(0);
+
 	const fetchProductData = () => {
 		products.map((item) => {
 			if (item._id === productId) {
 				setProductData(item);
 				setImage(item.image[0]);
+
+				// Generate random offer between 10-50%
+				const randomOffer = Math.floor(Math.random() * 41) + 10;
+				setOffer(randomOffer);
+
+				// Calculate original price based on offer
+				const calculatedOriginalPrice = Math.round(item.price * (1 + randomOffer / 100));
+				setOriginalPrice(calculatedOriginalPrice);
+
 				return null;
 			}
 		});
@@ -26,7 +39,7 @@ const Product = () => {
 	}, [productId, products]);
 
 	return productData ? (
-		<div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
+		<div className="pt-8 transition-opacity ease-in duration-500 opacity-100">
 			{/* -----------------Product Data----------------- */}
 			<div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
 				{/*------------------Product Images------------------ */}
@@ -57,10 +70,24 @@ const Product = () => {
 						<img src={assets.star_dull_icon} alt="" className="w-3.5" />
 						<p className="pl-2">(122)</p>
 					</div>
-					<p className="mt-5 text-3xl font-medium">
-						{currency}
-						{productData.price}
-					</p>
+
+					{/* Price Section with Offer and Cut Price */}
+					<div className="mt-5 flex items-center gap-4">
+						<div className="flex items-baseline gap-3">
+							<p className="text-3xl font-bold text-black">
+								{currency}
+								{productData.price}
+							</p>
+							<p className="text-lg text-gray-400 line-through">
+								{currency}
+								{originalPrice}
+							</p>
+						</div>
+						<div className="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-semibold">
+							{offer}% OFF
+						</div>
+					</div>
+
 					<p className="mt-5 text-gray-500 md:w-4/5">{productData.description}</p>
 					<div className="flex flex-col gap-4 my-8">
 						<p>Select Size</p>

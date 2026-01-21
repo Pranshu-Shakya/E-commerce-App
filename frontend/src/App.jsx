@@ -21,28 +21,30 @@ import VerifyEmail from "./pages/VerifyEmail.jsx";
 const App = () => {
 	return (
 		<div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
-            <ScrollToTop />
+			<ScrollToTop />
 			<ToastContainer />
 			<Navbar />
-			<SearchBar />
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/collection" element={<Collection />} />
-				<Route path="/about" element={<About />} />
-				<Route path="/contact" element={<Contact />} />
-				<Route path="/product/:productId" element={<Product />} />
-				<Route path="/cart" element={<Cart />} />
-				<Route path="/login" element={<Login />} />
-				<Route path="/place-order" element={<PlaceOrder />} />
-				<Route path="/orders" element={<Orders />} />
-				<Route path="/verify" element={<Verify />} />
-				<Route path="/profile" element={<Profile />} />
-				<Route path="/verify-email" element={<VerifyEmail />} />
-				<Route
-					path="*"
-					element={<h1 className="text-3xl text-center mt-10">Page Not Found</h1>}
-				/>
-			</Routes>
+			<div className="pt-20">
+				<SearchBar />
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/collection" element={<Collection />} />
+					<Route path="/about" element={<About />} />
+					<Route path="/contact" element={<Contact />} />
+					<Route path="/product/:productId" element={<Product />} />
+					<Route path="/cart" element={<Cart />} />
+					<Route path="/login" element={<Login />} />
+					<Route path="/place-order" element={<PlaceOrder />} />
+					<Route path="/orders" element={<Orders />} />
+					<Route path="/verify" element={<Verify />} />
+					<Route path="/profile" element={<Profile />} />
+					<Route path="/verify-email" element={<VerifyEmail />} />
+					<Route
+						path="*"
+						element={<h1 className="text-3xl text-center mt-10">Page Not Found</h1>}
+					/>
+				</Routes>
+			</div>
 			<Footer />
 		</div>
 	);

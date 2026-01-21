@@ -24,7 +24,7 @@ const SearchBar = () => {
 		<div
 			className={`transition-all duration-400 ease-in-out overflow-hidden ${
 				showSearch && visible ? "opacity-100 max-h-40" : "opacity-0 max-h-0"
-			} border-t border-b bg-gray-50 text-center`}
+			} border-t border-b border-gray-300 bg-gray-50 text-center`}
 		>
 			{showSearch && visible && (
 				<>

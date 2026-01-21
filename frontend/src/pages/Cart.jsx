@@ -30,23 +30,23 @@ const Cart = () => {
 	}, [cartItems, products]);
 
 	return (
-		<div className="border-t pt-12">
-			<div className="text-2xl mb-3">
+		<div className="pt-8 pb-16">
+			<div className="mb-12 text-2xl">
 				<Title text1={"YOUR"} text2={"CART"} />
 			</div>
 
 			{cartData.length === 0 ? (
-				<div className="text-center text-gray-500 py-20 flex flex-col items-center">
-					<img className="w-24 m-8" src={assets.shopping_cart} alt="" />
-					<p className="text-lg font-semibold mb-2">Your cart is empty</p>
-					<p className="text-sm mb-4">
-						Looks like you haven't added anything to your cart yet.
+				<div className="text-center py-20 flex flex-col items-center">
+					<img className="w-24 mb-6 opacity-80" src={assets.shopping_cart} alt="" />
+					<p className="text-2xl font-light text-gray-800 mb-2">Cart is empty</p>
+					<p className="text-gray-500 mb-8 max-w-sm">
+						Looks like you haven't added anything to your cart yet. Start exploring.
 					</p>
 					<Button text="Continue Shopping" link="/collection" />
 				</div>
 			) : (
 				<>
-					<div>
+					<div className="space-y-4 mb-12">
 						{cartData.map((item, index) => {
 							const productData = products.find(
 								(product) => product._id === item._id
@@ -55,61 +55,95 @@ const Cart = () => {
 							return (
 								<div
 									key={index}
-									className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_o.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
+									className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100"
 								>
-									<div className="flex items-start gap-6">
-										<img
-											className="w-16 sm:w-20"
-											src={productData.image[0]}
-											alt=""
-										/>
-										<div>
-											<p className="text-sx sm:text-lg font-medium">
+									<div className="p-6 flex flex-col md:flex-row md:items-center gap-6">
+										{/* Product Image */}
+										<div className="md:w-24 w-full">
+											<img
+												className="w-full aspect-square object-cover rounded-md"
+												src={productData.image[0]}
+												alt={productData.name}
+											/>
+										</div>
+
+										{/* Product Details */}
+										<div className="flex-1 min-w-0">
+											<p className="text-lg font-medium text-gray-800 mb-3">
 												{productData.name}
 											</p>
-											<div className="flex items-center gap-5 mt-2">
-												<p>
-													{currency}
-													{productData.price}
-												</p>
-												<p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
-													{item.size}
-												</p>
+											<div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+												<div>
+													<p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Price</p>
+													<p className="font-semibold text-gray-800">
+														{currency}
+														{productData.price}
+													</p>
+												</div>
+												<div>
+													<p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Size</p>
+													<p className="font-semibold text-gray-800 bg-gray-100 px-2 py-1 rounded w-fit">
+														{item.size}
+													</p>
+												</div>
+												<div>
+													<p className="text-gray-500 text-xs uppercase tracking-wide mb-1">Quantity</p>
+													<div className="flex items-center border border-gray-300 rounded-md w-fit">
+														<button
+															onClick={() => updateQuantity(item._id, item.size, Math.max(1, item.quantity - 1))}
+															className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
+														>
+															−
+														</button>
+														<span className="px-4 py-1 font-medium text-gray-800 border-l border-r border-gray-300 min-w-12 text-center">
+															{item.quantity}
+														</span>
+														<button
+															onClick={() => updateQuantity(item._id, item.size, item.quantity + 1)}
+															className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
+														>
+															+
+														</button>
+													</div>
+												</div>
 											</div>
 										</div>
+
+										{/* Total Price and Delete */}
+										<div className="flex flex-col items-start md:items-end gap-4 md:w-40">
+											<div className="text-right">
+												<p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Subtotal</p>
+												<p className="text-xl font-bold text-black">
+													{currency}
+													{(productData.price * item.quantity).toFixed(2)}
+												</p>
+											</div>
+											<button
+												onClick={() => updateQuantity(item._id, item.size, 0)}
+												className="w-full md:w-auto px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors duration-300 flex items-center justify-center gap-2"
+											>
+												<img
+													className="w-4"
+													src={assets.bin_icon}
+													alt=""
+												/>
+												Remove
+											</button>
+										</div>
 									</div>
-									<input
-										onChange={(e) =>
-											e.target.value === "" || e.target.value === "0"
-												? null
-												: updateQuantity(
-														item._id,
-														item.size,
-														Number(e.target.value)
-												  )
-										}
-										className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
-										type="number"
-										min={1}
-										defaultValue={item.quantity}
-									/>
-									<img
-										onClick={() => updateQuantity(item._id, item.size, 0)}
-										className="w-4 mr-4 sm:w-5 cursor-pointer"
-										src={assets.bin_icon}
-										alt=""
-									/>
 								</div>
 							);
 						})}
 					</div>
-					<div className="flex justify-end my-20">
-						<div className="w-full sm:w-[450px]">
-							<CartTotal />
-							<div className="w-full text-end">
+
+					{/* Cart Summary */}
+					<div className="flex justify-end">
+						<div className="w-full md:w-[450px]">
+							<div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+								<CartTotal />
 								<button
 									onClick={() => navigate("/place-order")}
-									className="bg-black text-white hover:bg-black/85 text-sm my-8 px-8 py-3"
+									className="w-full mt-6 px-8 py-3 bg-black text-white font-medium text-sm rounded-md hover:bg-gray-800 transition-colors duration-300"
 								>
 									PROCEED TO CHECKOUT
 								</button>
