@@ -5,13 +5,15 @@ import { ShopContext } from "../context/ShopContext.jsx";
 import { toast } from "react-toastify";
 
 const Account = () => {
-	const { backendUrl } = useContext(ShopContext);
+	const { backendUrl, isAuthenticated } = useContext(ShopContext);
 	const [user, setUser] = useState({});
 	const [editMode, setEditMode] = useState(false);
 	const [form, setForm] = useState({});
 	const [avatarPreview, setAvatarPreview] = useState(user.profilePicture);
-    const [isEmailVerified, setIsEmailVerified] = useState(false);
+	const [isEmailVerified, setIsEmailVerified] = useState(user.isEmailVerified || false);
 	const fileInputRef = useRef();
+
+	// console.log("user", user);
 
 	const fetchUserData = async () => {
 		try {
@@ -30,19 +32,23 @@ const Account = () => {
 		}
 	};
 
-    const handleEmailVerification = async () => {
-        try {
-            const response = await axios.post(`${backendUrl}/api/user/verify-email`, {}, { withCredentials: true });
-            if (response.data.success) {
-                setIsEmailVerified(true);
-                toast.success("Email verified successfully");
-            } else {
-                toast.error(response.data.message || "Failed to verify email");
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+	const handleEmailVerification = async () => {
+		try {
+			const response = await axios.post(
+				`${backendUrl}/api/user/verify-email`,
+				{},
+				{ withCredentials: true },
+			);
+			if (response.data.success) {
+				setIsEmailVerified(true);
+				toast.success("Email verified successfully");
+			} else {
+				toast.error(response.data.message || "Failed to verify email");
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const handleChange = (e) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
@@ -74,18 +80,18 @@ const Account = () => {
 	const handleSave = async (e) => {
 		e.preventDefault();
 		setUser(form);
-        try {
-            const response = await axios.post(`${backendUrl}/api/user/update-profile`, form, {
-                withCredentials: true,
-            });
-            if (response.data.success) {
-                toast.success("Profile updated successfully");
-            } else {
-                toast.error(response.data.message || "Failed to update profile");
-            }
-        } catch (error) {
-            console.log(error)
-        }
+		try {
+			const response = await axios.post(`${backendUrl}/api/user/update-profile`, form, {
+				withCredentials: true,
+			});
+			if (response.data.success) {
+				toast.success("Profile updated successfully");
+			} else {
+				toast.error(response.data.message || "Failed to update profile");
+			}
+		} catch (error) {
+			console.log(error);
+		}
 		setEditMode(false);
 	};
 
@@ -225,11 +231,14 @@ const Account = () => {
 					<div className="text-center mb-6">
 						<h2 className="text-2xl font-semibold mb-1">{user.name}</h2>
 						<div className="flex  gap-4 my-4 items-center">
-                            <p className="text-gray-500">{user.email}</p>
-                            <button onClick={handleEmailVerification} className={`border px-4 py-2 text-sm font-medium rounded-sm ${isEmailVerified ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-400"}`}>
-                                {isEmailVerified ? "Verified" : "Verify Email"}
-                            </button>
-                        </div>
+							<p className="text-gray-500">{user.email}</p>
+							<button
+								onClick={handleEmailVerification}
+								className={`border px-4 py-2 text-sm font-medium rounded-sm ${isEmailVerified ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-400"}`}
+							>
+								{isEmailVerified ? "Verified" : "Verify Email"}
+							</button>
+						</div>
 					</div>
 					<div className="w-full space-y-4">
 						<div className="flex items-center gap-2">

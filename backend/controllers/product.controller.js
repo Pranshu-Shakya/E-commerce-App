@@ -1,6 +1,18 @@
 import { v2 as cloudinary } from "cloudinary";
 import Product from "../models/product.model.js";
 
+// Generate rewiews and rating
+const generateReviewsAndRating = () => {
+    const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
+    const reviews = Math.floor(Math.random() * 500) + 50;
+    return { rating: Number(rating), reviews };
+}
+
+// Gerate random discount between 10-30%
+const generateDiscount = () => {
+    return Math.floor(Math.random() * 21) + 10;
+}
+
 // add product
 const addProduct = async (req, res) => {
 	try {
@@ -23,6 +35,8 @@ const addProduct = async (req, res) => {
             })
         );
 
+        const { rating, reviews } = generateReviewsAndRating();
+
         const productData = {
             name,
             description,
@@ -32,7 +46,10 @@ const addProduct = async (req, res) => {
             sizes: JSON.parse(sizes),
             bestseller: bestseller === "true" ? true : false, //bestseller === "true" 
             image: imagesUrl,
-            date: Date.now()
+            date: Date.now(),
+            offer: generateDiscount(),
+            rating,
+            reviews,
         }
 
         console.log("Product Data:", productData);

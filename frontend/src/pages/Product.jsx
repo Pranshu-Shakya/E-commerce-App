@@ -21,12 +21,8 @@ const Product = () => {
 				setProductData(item);
 				setImage(item.image[0]);
 
-				// Generate random offer between 10-50%
-				const randomOffer = Math.floor(Math.random() * 41) + 10;
-				setOffer(randomOffer);
-
 				// Calculate original price based on offer
-				const calculatedOriginalPrice = Math.round(item.price * (1 + randomOffer / 100));
+				const calculatedOriginalPrice = Math.round(item.price * (1 + item.offer / 100));
 				setOriginalPrice(calculatedOriginalPrice);
 
 				return null;
@@ -63,12 +59,23 @@ const Product = () => {
 				<div className="flex-1">
 					<h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
 					<div className="flex items-center mt-2 gap-1">
-						<img src={assets.star_icon} alt="" className="w-3.5" />
-						<img src={assets.star_icon} alt="" className="w-3.5" />
-						<img src={assets.star_icon} alt="" className="w-3.5" />
-						<img src={assets.star_icon} alt="" className="w-3.5" />
-						<img src={assets.star_dull_icon} alt="" className="w-3.5" />
-						<p className="pl-2">(122)</p>
+                        <div className="flex items-center gap-1">
+							{/* Stars */}
+							{[...Array(5)].map((_, index) => (
+								<svg
+									key={index}
+									className={`w-3.5 h-3.5 ${
+										index < Math.round(productData.rating)
+											? "text-yellow-400 fill-yellow-400"
+											: "text-gray-300 fill-gray-300"
+									}`}
+									viewBox="0 0 20 20"
+								>
+									<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+								</svg>
+							))}
+						</div>
+						<p className="pl-2">({productData.reviews})</p>
 					</div>
 
 					{/* Price Section with Offer and Cut Price */}
@@ -84,7 +91,7 @@ const Product = () => {
 							</p>
 						</div>
 						<div className="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-semibold">
-							{offer}% OFF
+							{productData.offer}% OFF
 						</div>
 					</div>
 

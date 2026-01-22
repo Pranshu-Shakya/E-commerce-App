@@ -2,23 +2,23 @@ import React from "react";
 import { ShopContext } from "../context/ShopContext.jsx";
 import { Link } from "react-router-dom";
 
-const ProductItem = ({ id, name, image, price }) => {
+const ProductItem = ({ id, name, image, price, offer, rating, reviews }) => {
 	const { currency } = React.useContext(ShopContext);
 
 	// Generate random discount between 10-50%
-	const discount = Math.floor(Math.random() * 41) + 10;
-	const originalPrice = Math.round(price * (1 + discount / 100));
+	// const discount = Math.floor(Math.random() * 41) + 10;
+	const originalPrice = Math.round(price * (1 + offer / 100));
 
 	// Generate random rating between 3.5 and 5
-	const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
-	const reviews = Math.floor(Math.random() * 500) + 50;
+	// const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
+	// const reviews = Math.floor(Math.random() * 500) + 50;
 
 	return (
 		<Link to={`/product/${id}`} className="group block h-full">
 			<div className="relative overflow-hidden rounded-lg bg-white shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col">
 				{/* Discount Badge */}
 				<div className="absolute top-3 left-3 z-10 bg-red-500 text-white text-xs font-semibold px-2.5 py-1 rounded-md">
-					{discount}% OFF
+					{offer}% OFF
 				</div>
 
 				{/* Product Image */}
@@ -45,7 +45,7 @@ const ProductItem = ({ id, name, image, price }) => {
 								<svg
 									key={index}
 									className={`w-3.5 h-3.5 ${
-										index < Math.floor(rating)
+										index < Math.round(rating)
 											? "text-yellow-400 fill-yellow-400"
 											: "text-gray-300 fill-gray-300"
 									}`}
