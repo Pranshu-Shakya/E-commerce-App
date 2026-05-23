@@ -33,7 +33,7 @@ app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 
 app.get("/", (req, res) => {
-	res.status(200).send("Welcome to the Forever backend server!");
+	res.status(200).send("Welcome to the TrendsKart backend server!");
 });
 
 app.listen(PORT, () => {

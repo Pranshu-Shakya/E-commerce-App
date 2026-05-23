@@ -38,38 +38,38 @@ const PlaceOrder = () => {
 		setFormData((data) => ({ ...data, [name]: value }));
 	};
 
-	const initPay = async (order) => {
-		const options = {
-			key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-			amount: order.amount * 100, // amount in the smallest currency unit
-			currency: order.currency,
-			name: "Order Payment",
-			description: "Order Payment",
-			order_id: order.id, // This is the Razorpay order ID
-			receipt: order.receipt,
-			handler: async (response) => {
-				console.log(response);
-				try {
-					const { data } = await axios.post(
-						backendUrl + "/api/order/verifyRazorpay",
-						{ response },
-						{ withCredentials: true }
-					);
-					if (data.success) {
-						navigate("/orders");
-						setCartItems({});
-					} else {
-						toast.error(data.message || "Something went wrong");
-					}
-				} catch (error) {
-					console.log(error);
-					toast.error(error.message || "Something went wrong");
-				}
-			},
-		};
-		const rzp = new window.Razorpay(options);
-		rzp.open();
-	};
+	// const initPay = async (order) => {
+	// 	const options = {
+	// 		key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+	// 		amount: order.amount * 100, // amount in the smallest currency unit
+	// 		currency: order.currency,
+	// 		name: "Order Payment",
+	// 		description: "Order Payment",
+	// 		order_id: order.id, // This is the Razorpay order ID
+	// 		receipt: order.receipt,
+	// 		handler: async (response) => {
+	// 			console.log(response);
+	// 			try {
+	// 				const { data } = await axios.post(
+	// 					backendUrl + "/api/order/verifyRazorpay",
+	// 					{ response },
+	// 					{ withCredentials: true }
+	// 				);
+	// 				if (data.success) {
+	// 					navigate("/orders");
+	// 					setCartItems({});
+	// 				} else {
+	// 					toast.error(data.message || "Something went wrong");
+	// 				}
+	// 			} catch (error) {
+	// 				console.log(error);
+	// 				toast.error(error.message || "Something went wrong");
+	// 			}
+	// 		},
+	// 	};
+	// 	const rzp = new window.Razorpay(options);
+	// 	rzp.open();
+	// };
 
 	const onSubmitHandler = async (e) => {
 		e.preventDefault();
@@ -131,15 +131,15 @@ const PlaceOrder = () => {
 					break;
 
 				case "razorpay":
-					const razorpayResponse = await axios.post(
-						backendUrl + "/api/order/razorpay",
-						orderData,
-						{ withCredentials: true }
-					);
-					if (razorpayResponse.data.success) {
-						initPay(razorpayResponse.data.order);
-					}
-
+					// const razorpayResponse = await axios.post(
+					// 	backendUrl + "/api/order/razorpay",
+					// 	orderData,
+					// 	{ withCredentials: true }
+					// );
+					// if (razorpayResponse.data.success) {
+					// 	initPay(razorpayResponse.data.order);
+					// }
+                    toast.error("Razorpay payment method is currently unavailable");
 					break;
 
 				default:
@@ -154,6 +154,7 @@ const PlaceOrder = () => {
 	return (
 		<form
 			onSubmit={onSubmitHandler}
+            autoComplete="on"
 			className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh]"
 		>
 			{/* ----------------Left Side------------------- */}

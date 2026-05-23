@@ -70,11 +70,11 @@ STRIPE_SECRET_KEY=sk_test_...
 # SMTP (Brevo or other)
 SMTP_USER=your_smtp_user
 SMTP_PASSWORD=your_smtp_password
-SENDER_NAME=Forever
-SENDER_EMAIL=no-reply@forever.com
+SENDER_NAME=TrendsKart
+SENDER_EMAIL=no-reply@trendskart.com
 
 # Admin login (for Admin Panel)
-ADMIN_EMAIL=admin@forever.com
+ADMIN_EMAIL=admin@trendskart.com
 ADMIN_PASSWORD=change_me
 ```
 

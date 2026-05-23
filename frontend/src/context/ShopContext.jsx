@@ -88,6 +88,7 @@ const ShopContextProvider = (props) => {
 
 	const getUserCart = async () => {
 		try {
+            if(!isAuthenticated) return;
 			const response = await axios.post(
 				backendUrl + "/api/cart/get",
 				{},

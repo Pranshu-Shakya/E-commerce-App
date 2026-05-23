@@ -16,6 +16,7 @@ const BillingAddress = () => {
 					</label>
 					<input
 						type="text"
+                        name="firstname"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						defaultValue="Pranshu"
 					/>
@@ -26,6 +27,7 @@ const BillingAddress = () => {
 					</label>
 					<input
 						type="text"
+                        name="lastname"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						defaultValue="Shakya"
 					/>
@@ -36,11 +38,13 @@ const BillingAddress = () => {
 					</label>
 					<input
 						type="text"
+                        name="address"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-2"
 						defaultValue="12 abc street"
 					/>
 					<input
 						type="text"
+                        name="address2"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						placeholder="Apartment, suite, unit etc. (optional)"
 					/>
@@ -51,6 +55,7 @@ const BillingAddress = () => {
 					</label>
 					<input
 						type="text"
+                        name="city"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						defaultValue="london"
 					/>
@@ -59,7 +64,7 @@ const BillingAddress = () => {
 					<label className="block font-medium mb-1">
 						Country <span className="text-red-500">*</span>
 					</label>
-					<select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+					<select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" name="country">
 						<option>United Kingdom (UK)</option>
 						<option>United States (US)</option>
 						<option>India</option>
@@ -70,6 +75,7 @@ const BillingAddress = () => {
 					<label className="block font-medium mb-1">State</label>
 					<input
 						type="text"
+						name="state"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 					/>
 				</div>
@@ -79,6 +85,7 @@ const BillingAddress = () => {
 					</label>
 					<input
 						type="text"
+						name="postcode"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 					/>
 				</div>
@@ -86,6 +93,7 @@ const BillingAddress = () => {
 					<label className="block font-medium mb-1">Phone</label>
 					<input
 						type="text"
+						name="phone"
 						className="w-full border border-gray-300 rounded-lg px-3 py-2"
 					/>
 				</div>
