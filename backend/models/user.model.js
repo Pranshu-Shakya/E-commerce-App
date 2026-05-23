@@ -27,9 +27,11 @@ const userSchema = new mongoose.Schema(
 		address: {
 			type: Object,
 			default: {
-                colony: "",
+                address1: "",
+                town: "",
                 state: "",
                 country: "India",
+                postcode: "",
             },
 		},
 		phone: {

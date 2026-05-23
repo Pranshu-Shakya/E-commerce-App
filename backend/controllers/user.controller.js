@@ -231,10 +231,18 @@ const updateUserProfile = async (req, res) => {
 			return res.status(404).json({ success: false, message: "User not found" });
 		}
 
+        const newAddress = {
+            address1: address?.address1 || user.address.address1,
+            town: address?.town || user.address.town,
+            state: address?.state || user.address.state,
+            country: address?.country || user.address.country,
+            postcode: address?.postcode || user.address.postcode,
+        }
+
 		user.name = name;
 		user.email = email;
 		user.phone = phone || user.phone;
-		user.address = address || user.address;
+		user.address = newAddress;
 
 		if (profilePicture) {
 			// Upload new profile picture to Cloudinary

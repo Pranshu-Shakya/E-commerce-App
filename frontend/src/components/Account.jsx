@@ -4,16 +4,13 @@ import axios from "axios";
 import { ShopContext } from "../context/ShopContext.jsx";
 import { toast } from "react-toastify";
 
-const Account = () => {
+const Account = ({ user }) => {
 	const { backendUrl, isAuthenticated } = useContext(ShopContext);
-	const [user, setUser] = useState({});
 	const [editMode, setEditMode] = useState(false);
-	const [form, setForm] = useState({});
+	const [form, setForm] = useState(user);
 	const [avatarPreview, setAvatarPreview] = useState(user.profilePicture);
 	const [isEmailVerified, setIsEmailVerified] = useState(user.isEmailVerified || false);
 	const fileInputRef = useRef();
-
-	// console.log("user", user);
 
 	const fetchUserData = async () => {
 		try {
@@ -21,7 +18,7 @@ const Account = () => {
 				withCredentials: true,
 			});
 			if (response.data.success) {
-				setUser(response.data.user);
+				// setUser(response.data.user);
 				setForm(response.data.user);
 				setAvatarPreview(response.data.user.profilePicture || assets.profile);
 			} else {
@@ -95,18 +92,26 @@ const Account = () => {
 		setEditMode(false);
 	};
 
-	useEffect(() => {
-		fetchUserData();
-	}, []);
+	// useEffect(() => {
+	// 	fetchUserData();
+	// }, []);
 
 	return (
 		<div className="max-w-lg mx-auto bg-white flex flex-col items-center">
 			<div className="relative mb-4">
-				<img
-					src={avatarPreview}
-					alt="Profile"
-					className="w-28 h-28 rounded-full object-cover border-4 border-gray-200 shadow"
-				/>
+				{user.profilePicture ? (
+					<img
+						src={user.profilePicture}
+						alt="Profile"
+						className="w-28 h-28 rounded-full object-cover border-4 border-gray-200 shadow"
+					/>
+				) : (
+					<div className="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center border-4 border-gray-200 shadow mb-4">
+						<p className="text-gray-400 text-5xl font-bold">
+							{user.name?.charAt(0) || "A"}
+						</p>
+					</div>
+				)}
 				{editMode && (
 					<button
 						type="button"
@@ -164,7 +169,7 @@ const Account = () => {
 						<input
 							type="text"
 							name="address"
-							value={form.address.colony}
+							value={form.address?.address1}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						/>
@@ -174,7 +179,7 @@ const Account = () => {
 						<input
 							type="text"
 							name="country"
-							value={form.address.country}
+							value={form.address?.country}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						/>
@@ -184,32 +189,21 @@ const Account = () => {
 						<input
 							type="text"
 							name="state"
-							value={form.address.state}
+							value={form.address?.state}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						/>
 					</div>
 					<div>
-						<label className="block font-semibold mb-1">Address</label>
+						<label className="block font-semibold mb-1">Postcode</label>
 						<input
 							type="text"
-							name="address"
-							value={form.address.colony}
+							name="postcode"
+							value={form.address?.postcode}
 							onChange={handleChange}
 							className="w-full border border-gray-300 rounded-lg px-3 py-2"
 						/>
 					</div>
-					{/* <div>
-						<label className="block font-semibold mb-1">Member Since</label>
-						<input
-							type="text"
-							name="joined"
-							value={form.joined}
-							onChange={handleChange}
-							className="w-full border border-gray-300 rounded-lg px-3 py-2"
-							disabled
-						/>
-					</div> */}
 					<div className="flex gap-3 justify-end pt-2">
 						<button
 							type="button"
@@ -251,11 +245,7 @@ const Account = () => {
 						</div>
 						<div className="flex items-center gap-2">
 							<span className="font-semibold w-32">Address:</span>
-							<span className="text-gray-700">{user.address?.colony}</span>
-						</div>
-						<div className="flex items-center gap-2">
-							<span className="font-semibold w-32">Member Since:</span>
-							{/* <span className="text-gray-700">{user.joined}</span> */}
+							<span className="text-gray-700">{user.address?.address1}</span>
 						</div>
 					</div>
 					<button

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { assets } from "../assets/assets.js";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {ShopContext} from "../context/ShopContext.jsx";
+import { ShopContext } from "../context/ShopContext.jsx";
 import BillingAddress from "../components/BillingAddress.jsx";
 import ChangePassword from "../components/ChangePassword.jsx";
 import MyOrders from "../components/MyOrders.jsx";
@@ -10,44 +10,44 @@ import DeleteAccount from "../components/DeleteAccount.jsx";
 import Account from "../components/Account.jsx";
 import Privacy from "../components/Privacy.jsx";
 
-const navItems = [
-	{ icon: "fa-user", label: "Account", component: <Account /> },
-	{ icon: "fa-asterisk", label: "Change Password", component: <ChangePassword /> },
-	{ icon: "fa-credit-card", label: "Billing Address", component: <BillingAddress /> },
-	{ icon: "fa-truck", label: "Shipping Address", component: <BillingAddress /> },
-	{ icon: "fa-shopping-cart", label: "My Orders", component: <MyOrders /> },
-	{ icon: "fa-lock", label: "Privacy", component: <Privacy /> },
-	{ icon: "fa-trash", label: "Delete Account", component: <DeleteAccount /> },
-];
-
 function Profile() {
-    const { backendUrl, isAuthenticated, navigate } = useContext(ShopContext);
+	const { backendUrl, isAuthenticated, navigate } = useContext(ShopContext);
 	const [activeTab, setActiveTab] = useState("account");
 	const [user, setUser] = useState({});
 
-    const fetchProfile = async () => {
-        try {
-            const response = await axios.get(`${backendUrl}/api/user/current`, {
-                withCredentials: true,
-            });
-            if (response.data.success) {
-                setUser(response.data.user);
-            } else {
-                // toast.error(response.data.message || "Failed to fetch profile");
-                console.log(response.data.message);
-            }
-        } catch (error) {
-            console.log(error);
-            // toast.error("Failed to fetch profile");
-        }
-    }
+	// console.log("User in Profile:", user);
 
-    useEffect(() => {
-        fetchProfile();
-    }, [activeTab]);
+	const fetchProfile = async () => {
+		try {
+			const response = await axios.get(`${backendUrl}/api/user/current`, {
+				withCredentials: true,
+			});
+			if (response.data.success) {
+				setUser(response.data.user);
+			} else {
+				// toast.error(response.data.message || "Failed to fetch profile");
+				console.log(response.data.message);
+			}
+		} catch (error) {
+			console.log(error);
+			// toast.error("Failed to fetch profile");
+		}
+	};
+
+	const navItems = [
+		{ icon: "fa-user", label: "Account", component: <Account user={user} /> },
+		{ icon: "fa-asterisk", label: "Change Password", component: <ChangePassword /> },
+		{ icon: "fa-truck", label: "Shipping Address", component: <BillingAddress user={user} /> },
+		{ icon: "fa-lock", label: "Privacy", component: <Privacy /> },
+		{ icon: "fa-trash", label: "Delete Account", component: <DeleteAccount /> },
+	];
+
+	useEffect(() => {
+		fetchProfile();
+	}, [activeTab]);
 
 	const activeItem = navItems.find(
-		(item) => item.label.toLowerCase().replace(" ", "-") === activeTab
+		(item) => item.label.toLowerCase().replace(" ", "-") === activeTab,
 	);
 
 	return (
@@ -61,13 +61,18 @@ function Profile() {
 							: "opacity-100 scale-100"
 					}`}
 				>
-					<img
-						src={user.profilePicture || assets.defaultAvatar}
-						alt="Profile"
-						className="w-28 h-28 rounded-full object-cover border-4 border-gray-200 shadow mb-4"
-					/>
+                    {user.profilePicture ? (
+						<img
+							src={user.profilePicture}
+							alt="Profile"
+							className="w-28 h-28 rounded-full object-cover border-4 border-gray-200 shadow mb-4"
+						/>
+					) : (
+						<div className="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center border-4 border-gray-200 shadow mb-4">
+                            <p className="text-gray-400 text-5xl font-bold">{user.name?.charAt(0) || "A"}</p>
+                        </div>
+					)}
 					<h2 className="text-xl font-semibold mb-1">{user.name}</h2>
-					<p className="text-gray-500 mb-6 text-sm">{user.email}</p>
 				</div>
 				<nav className="w-full">
 					<ul className="space-y-2">
@@ -105,31 +110,35 @@ function Profile() {
 			</aside>
 
 			{/* Main Content */}
-			{ isAuthenticated ? (<main className="flex-1 bg-white rounded-2xl shadow p-8">
-				<h3 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-					{activeItem?.icon && (
-						<i className={`fas ${activeItem.icon} text-blue-500`}></i>
+			{isAuthenticated ? (
+				<main className="flex-1 bg-white rounded-2xl shadow p-8">
+					<h3 className="text-2xl font-semibold mb-6 flex items-center gap-3">
+						{activeItem?.icon && (
+							<i className={`fas ${activeItem.icon} text-blue-500`}></i>
+						)}
+						{activeItem?.label || "Profile"}
+					</h3>
+					{activeItem?.component || (
+						<div className="text-center text-gray-500">
+							<p>Select a section from the sidebar to view details.</p>
+						</div>
 					)}
-					{activeItem?.label || "Profile"}
-				</h3>
-				{activeItem?.component || (
-					<div className="text-center text-gray-500">
-						<p>Select a section from the sidebar to view details.</p>
-					</div>
-				)}
-			</main>) : (
+				</main>
+			) : (
 				<div className="flex-1 flex flex-col items-center justify-center bg-white rounded-2xl shadow p-8 min-h-[350px]">
 					<div className="flex flex-col items-center">
 						{/* <div className="bg-blue-100 rounded-full p-4 mb-4">
 							<i className="fas fa-user-lock text-4xl text-blue-500"></i>
 						</div> */}
-						<h3 className="text-2xl font-semibold mb-2 text-center">You are not logged in</h3>
+						<h3 className="text-2xl font-semibold mb-2 text-center">
+							You are not logged in
+						</h3>
 						<p className="text-gray-500 mb-6 text-center max-w-xs">
 							Please log in to access your profile and account details.
 						</p>
 						<button
 							className="bg-blue-500 hover:bg-blue-600 transition text-white px-6 py-2 rounded-lg font-medium shadow"
-							onClick={() => navigate('/login')}
+							onClick={() => navigate("/login")}
 						>
 							Log In
 						</button>
