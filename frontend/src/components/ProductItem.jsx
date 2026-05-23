@@ -5,13 +5,7 @@ import { Link } from "react-router-dom";
 const ProductItem = ({ id, name, image, price, offer, rating, reviews }) => {
 	const { currency } = React.useContext(ShopContext);
 
-	// Generate random discount between 10-50%
-	// const discount = Math.floor(Math.random() * 41) + 10;
 	const originalPrice = Math.round(price * (1 + offer / 100));
-
-	// Generate random rating between 3.5 and 5
-	// const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
-	// const reviews = Math.floor(Math.random() * 500) + 50;
 
 	return (
 		<Link to={`/product/${id}`} className="group block h-full">
