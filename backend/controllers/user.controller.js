@@ -22,6 +22,13 @@ const generateAccessAndRefreshToken = async (userId) => {
 	}
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+const cookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+}
+
 // Login a user
 const loginUser = async (req, res) => {
 	try {
@@ -45,20 +52,13 @@ const loginUser = async (req, res) => {
 
 		const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
-		const isProduction = process.env.NODE_ENV === "production";
-		const options = {
-			httpOnly: true,
-			secure: isProduction,
-			sameSite: isProduction ? "none" : "lax",
-		};
-
 		const userWithoutSensitiveData = await User.findById(user._id).select(
 			"-password -otp -otpExpiry -refreshToken",
 		);
 
 		return res
-			.cookie("refreshToken", refreshToken, options)
-			.cookie("accessToken", accessToken, options)
+			.cookie("refreshToken", refreshToken, cookieOptions)
+			.cookie("accessToken", accessToken, cookieOptions)
 			.status(200)
 			.json({
 				success: true,
@@ -124,16 +124,9 @@ const registerUser = async (req, res) => {
 
 		const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
-		const isProduction = process.env.NODE_ENV === "production";
-		const options = {
-			httpOnly: true,
-			secure: isProduction,
-			sameSite: isProduction ? "none" : "lax",
-		};
-
 		return res
-			.cookie("refreshToken", refreshToken, options)
-			.cookie("accessToken", accessToken, options)
+			.cookie("refreshToken", refreshToken, cookieOptions)
+			.cookie("accessToken", accessToken, cookieOptions)
 			.status(201)
 			.json({
 				success: true,
@@ -161,9 +154,10 @@ const logoutUser = async (req, res) => {
 		}
 		user.refreshToken = "";
 		await user.save({ validateBeforeSave: false });
+
 		return res
-			.clearCookie("refreshToken")
-			.clearCookie("accessToken")
+			.clearCookie("refreshToken", cookieOptions)
+			.clearCookie("accessToken", cookieOptions)
 			.status(200)
 			.json({ success: true, message: "User logged out successfully" });
 	} catch (error) {
