@@ -36,17 +36,25 @@ const ShopContextProvider = (props) => {
 		setCartItems(cartData);
 
 		try {
-			await axios.post(
+			const response = await axios.post(
 				backendUrl + "/api/cart/add",
 				{ itemId, size },
 				{ withCredentials: true }
 			);
-			toast.success("Item added to cart", {
-				position: "bottom-right",
-			});
+            if(response.data.success) {
+                toast.success("Item added to cart", {
+					position: "bottom-right",
+				});
+            } else {
+                toast.error(response.data.message || "Failed to add item to cart", {
+                    position: "bottom-right",
+                });
+            }
 		} catch (error) {
 			console.log(error);
-			toast.error(error.message || "Something went wrong while adding to cart");
+            toast.error("Please login to add items to cart", {
+                position: "bottom-right",
+            });
 		}
 	};
 

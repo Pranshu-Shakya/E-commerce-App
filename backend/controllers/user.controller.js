@@ -44,14 +44,16 @@ const loginUser = async (req, res) => {
 		}
 
 		const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+
+		const isProduction = process.env.NODE_ENV === "production";
 		const options = {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "none",
+			secure: isProduction,
+			sameSite: isProduction ? "none" : "lax",
 		};
 
 		const userWithoutSensitiveData = await User.findById(user._id).select(
-			"-password -otp -otpExpiry -refreshToken"
+			"-password -otp -otpExpiry -refreshToken",
 		);
 
 		return res
@@ -113,7 +115,7 @@ const registerUser = async (req, res) => {
 		const user = await newUser.save();
 
 		const createdUser = await User.findById(user._id).select(
-			"-password -otp -otpExpiry -refreshToken"
+			"-password -otp -otpExpiry -refreshToken",
 		);
 
 		if (!createdUser) {
@@ -122,10 +124,11 @@ const registerUser = async (req, res) => {
 
 		const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
+		const isProduction = process.env.NODE_ENV === "production";
 		const options = {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "none",
+			secure: isProduction,
+			sameSite: isProduction ? "none" : "lax",
 		};
 
 		return res
@@ -196,7 +199,7 @@ const getCurrentUserData = async (req, res) => {
 			return res.status(401).json({ success: false, message: "Unauthorized" });
 		}
 		const user = await User.findById(req.user._id).select(
-			"-password -otp -otpExpiry -refreshToken"
+			"-password -otp -otpExpiry -refreshToken",
 		);
 		if (!user) {
 			return res.status(404).json({ success: false, message: "User not found" });
@@ -231,13 +234,13 @@ const updateUserProfile = async (req, res) => {
 			return res.status(404).json({ success: false, message: "User not found" });
 		}
 
-        const newAddress = {
-            address1: address?.address1 || user.address.address1,
-            town: address?.town || user.address.town,
-            state: address?.state || user.address.state,
-            country: address?.country || user.address.country,
-            postcode: address?.postcode || user.address.postcode,
-        }
+		const newAddress = {
+			address1: address?.address1 || user.address.address1,
+			town: address?.town || user.address.town,
+			state: address?.state || user.address.state,
+			country: address?.country || user.address.country,
+			postcode: address?.postcode || user.address.postcode,
+		};
 
 		user.name = name;
 		user.email = email;
@@ -251,7 +254,7 @@ const updateUserProfile = async (req, res) => {
 					folder: "profile_pictures",
 					resource_type: "image",
 				});
-                user.profilePicture = result.secure_url;
+				user.profilePicture = result.secure_url;
 			} catch (error) {
 				console.log(error);
 				res.status(500).json({
@@ -259,7 +262,6 @@ const updateUserProfile = async (req, res) => {
 					message: "Failed to upload profile picture",
 				});
 			}
-
 		}
 
 		await user.save();
@@ -273,41 +275,42 @@ const updateUserProfile = async (req, res) => {
 
 // change password
 const changePassword = async (req, res) => {
-    try {
-        const { currentPassword, newPassword } = req.body;
+	try {
+		const { currentPassword, newPassword } = req.body;
 
-        if (!currentPassword || !newPassword) {
-            return res.status(400).json({ success: false, message: "Please fill all the fields" });
-        }
+		if (!currentPassword || !newPassword) {
+			return res.status(400).json({ success: false, message: "Please fill all the fields" });
+		}
 
-        if (newPassword.length < 5) {
-            return res.status(400).json({
-                success: false,
-                message: "New password must be at least 5 characters long",
-            });
-        }
+		if (newPassword.length < 5) {
+			return res.status(400).json({
+				success: false,
+				message: "New password must be at least 5 characters long",
+			});
+		}
 
-        const user = await User.findById(req.user._id);
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
+		const user = await User.findById(req.user._id);
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
 
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ success: false, message: "Current password is incorrect" });
-        }
+		const isMatch = await bcrypt.compare(currentPassword, user.password);
+		if (!isMatch) {
+			return res
+				.status(400)
+				.json({ success: false, message: "Current password is incorrect" });
+		}
 
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
-        await user.save();
+		const salt = await bcrypt.genSalt(10);
+		user.password = await bcrypt.hash(newPassword, salt);
+		await user.save();
 
-        return res.status(200).json({ success: true, message: "Password changed successfully" });
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-}
+		return res.status(200).json({ success: true, message: "Password changed successfully" });
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: false, message: error.message });
+	}
+};
 
 // send otp to user email
 const sendOtpToEmail = async (req, res) => {
@@ -425,5 +428,5 @@ export {
 	getUserProfile,
 	getCurrentUserData,
 	updateUserProfile,
-	changePassword
+	changePassword,
 };
