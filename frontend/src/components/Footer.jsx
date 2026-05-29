@@ -64,7 +64,7 @@ const Footer = () => {
 			<div>
 				<hr />
 				<p className="py-5 text-sm text-center">
-					Copyright 2025 @ trendskart.com - All Rights Reserved.
+					Copyright 2026 @ trendskart.com - All Rights Reserved.
 				</p>
 			</div>
 		</div>

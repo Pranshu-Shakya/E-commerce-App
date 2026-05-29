@@ -164,7 +164,3 @@ Most user endpoints rely on cookies for JWT; use `withCredentials: true` in Axio
 
 - Do not commit `.env` files or secrets. Rotate any keys that may have been committed historically.
 - Set strong `JWT_SECRET`, `ADMIN_PASSWORD`, and SMTP credentials.
-
-## License
-
-ISC — © Pranshu Shakya
