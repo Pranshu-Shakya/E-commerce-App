@@ -27,6 +27,7 @@ const About = () => {
 						To empower consumers by providing a seamless online shopping experience
 						while offering the best products at unbeatable prices.
 					</p>
+                    <b className="text-gray-800">Our Vision</b>
 				</div>
 			</div>
 
